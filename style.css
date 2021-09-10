@@ -10,4 +10,5 @@ html {
 /*Styles links inside nav bar*/
 .topnav a {
   float: right;
+  text-decoration: none;
 }
