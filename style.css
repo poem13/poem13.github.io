@@ -7,3 +7,7 @@ html {
   background-color: #333
   overflow: hidden
 }
+/*Styles links inside nav bar*/
+.topnav a {
+  float: right;
+}
