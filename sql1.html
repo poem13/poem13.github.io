@@ -1,0 +1,122 @@
+<!DOCTYPE HTML>
+<!--
+	Read Only by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+<head>
+    <title>Poe Myint</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body class="is-preload">
+
+<!-- Header -->
+<section id="header">
+    <header>
+        <span class="image avatar"><img src="images/avatar.jpg" alt="" /></span>
+        <h1 id="logo"><a href="#">Poe Myint</a></h1>
+        <p>Super nerd with a passion for<br />
+            data analysis!</p>
+    </header>
+    <nav id="nav">
+        <ul>
+            <li><a href="index.html">Back to Home</a></li>
+        </ul>
+    </nav>
+    <footer>
+        <ul class="icons">
+            <li><a href="https://github.com/poem13" class="icon brands fa-github"><span class="label">Github</span></a></li>
+            <li><a href="mailto: poemy.18@gmail.com" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+            <li><a href="https://www.linkedin.com/in/poemyint/"><span class="label">LinkedIn</span></a></li>
+        </ul>
+    </footer>
+</section>
+
+<!-- Wrapper -->
+<div id="wrapper">
+
+    <!-- Main -->
+    <div id="main">
+
+        <!-- One -->
+        <section id="one">
+            <div class="image main" data-position="center">
+                <img src="images/banner.jpg" alt="" />
+            </div>
+            <div class="container">
+                <header class="major">
+                    <h2>Analyzing Trending Industries</h2>
+                </header>
+                <p>Given a scenario to analyze high-growth companies, I had to find the top industries producing the highest valuations and industry trends. I queried Datacamp’s database containing 4 tables and produced the top industries for the years 2021, 2020, and 2019.</p>
+                <img src="table.png" style="width:800px;height:400px;">
+                <p>This was the query that I created. I emphasized using CTEs, JOINs, and grouping.</p>
+                <pre>
+                    WITH top_industries AS (
+                    SELECT i.industry, COUNT(i.company_id) AS industry_count
+                    FROM public.industries AS i
+                    INNER JOIN public.dates AS d
+                    ON i.company_id = d.company_id
+                    WHERE EXTRACT(year FROM d.date_joined) IN (2019, 2020, 2021)
+                    GROUP BY i.industry
+                    ORDER BY industry_count DESC
+                    LIMIT 3
+                    )
+
+                    num_unicorns AS (
+                    SELECT
+                    COUNT(i.company_id) AS num_unicorns,
+                    i.industry,
+                    EXTRACT(year FROM d.date_joined) AS year,
+                    AVG(f.valuation) AS avg_valuation
+                    FROM public.industries AS i
+                    INNER JOIN public.dates AS d
+                    ON i.company_id = d.company_id
+                    INNER JOIN public.funding AS f
+                    ON d.company_id = f.company_id
+                    GROUP BY i.industry, EXTRACT(year FROM d.date_joined)
+                    )
+
+                    SELECT
+                    ti.industry,
+                    nu.year,
+                    nu.num_unicorns,
+                    ROUND(AVG(nu.avg_valuation/1000000000), 2) AS average_valuation_billions
+                    FROM num_unicorns AS nu
+                    INNER JOIN top_industries AS ti
+                    ON nu.industry = ti.industry
+                    WHERE nu.year IN (2019, 2020, 2021)
+                    GROUP BY ti.industry, nu.year, nu.num_unicorns
+                    ORDER BY nu.year DESC, nu.num_unicorns DESC;
+                </pre>
+                <h4>Main Takeaways</h4>
+                <p>Based  on the results…fintech, internet software and sales, and e-commerce were trending industries from the years 2019-2021. There is an increasing, positive correlation for the number of unicorns (startups reaching $1billion in valuation) as the years increase. However, the average valuations for those industries seem to be decreasing from 2019 to 2021.</p>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <section id="footer">
+        <div class="container">
+            <ul class="copyright">
+                <li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+            </ul>
+        </div>
+    </section>
+
+</div>
+
+<!-- Scripts -->
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/jquery.scrollex.min.js"></script>
+<script src="assets/js/jquery.scrolly.min.js"></script>
+<script src="assets/js/browser.min.js"></script>
+<script src="assets/js/breakpoints.min.js"></script>
+<script src="assets/js/util.js"></script>
+<script src="assets/js/main.js"></script>
+
+</body>
+</html>
