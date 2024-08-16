@@ -56,6 +56,25 @@
                     <li>Does age, gender, or blood type correlate with certain medical conditions?</li>
                     <li>Which conditions are the most affecting, based on duration of stay and test results?</li>
                 </ul>
+                <h3>Data Prep</h3>
+                <p>I imported the dataset into MySQL workbench and wanted to plan how the database will look like. I created a schema design and wanted to use the snowflake schema and have normalization to reduce redundancy.</p>
+                <img src="images/healthcare.jpeg" alt="" style="width:800px;height:400px";/>
+                <br></br>
+                <p>I then created the tables in SQL and referenced the foreign + primary keys in the creation queries.
+                    Using COALESCE on multiple columns, I looked for any null values in the columns and there were none.
+                I analyzed for any outliers in the billing amount columns by using the Z-score. I did not find anything above a 3 which would be considered an outlier...</p>
+                <img src="images/outlier.png" alt="" style="width:600px;height:400px";/>
+
+                <h3>Exploratory Data Analysis (EDA)</h3>
+                <p>Now, I must understand the patterns and relationships in the data. Let us tackle these questions at the beginning.</p>
+                <h4>What are the most affordable insurance providers for those in the hospital?</h4>
+                <p>TO BE ADDED</p>
+                <h4>Does age, gender, or blood type correlate with certain medical conditions?</h4>
+                <p>TO BE ADDED!!!</p>
+                <h4>Which conditions are the most affecting, based on duration of stay and test results?</h4>
+                <p>TO BE ADDED!!!!!!!!!</p>
+
+                <h3>Main Takeaways</h3>
             </div>
         </section>
 
@@ -64,9 +83,7 @@
     <!-- Footer -->
     <section id="footer">
         <div class="container">
-            <ul class="copyright">
-                <li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-            </ul>
+                <footer>&copy; Untitled. All rights reserved.</footer><footer>Design: <a href="http://html5up.net">HTML5 UP</a></footer>
         </div>
     </section>
 
