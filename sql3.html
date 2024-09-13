@@ -1,0 +1,153 @@
+<!DOCTYPE HTML>
+<!--
+	Read Only by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+<head>
+    <title>Poe Myint</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body class="is-preload">
+
+<!-- Header -->
+<section id="header">
+    <header>
+        <span class="image avatar"><img src="images/avatar.jpg" alt="" /></span>
+        <h1 id="logo"><a href="#">Poe Myint</a></h1>
+        <p>Super nerd with a passion for<br />
+            data analysis!</p>
+    </header>
+    <nav id="nav">
+        <ul>
+            <li><a href="index.html">Back to Home</a></li>
+        </ul>
+    </nav>
+    <footer>
+        <ul class="icons">
+            <li><a href="https://github.com/poem13" class="icon brands fa-github"><span class="label">Github</span></a></li>
+            <li><a href="mailto: poemy.18@gmail.com" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+            <li><a href="https://www.linkedin.com/in/poemyint/"><span class="label">LinkedIn</span></a></li>
+        </ul>
+    </footer>
+</section>
+
+<!-- Wrapper -->
+<div id="wrapper">
+
+    <!-- Main -->
+    <div id="main">
+
+        <!-- One -->
+        <section id="one">
+            <div class="image main" data-position="center">
+                <img src="images/banner.jpg" alt="" />
+            </div>
+            <div class="container">
+                <header class="major">
+                    <h2>Manufacturing Parts</h2>
+                </header>
+                <p>Given a real world scenario to monitor a manufacturing process, I had to determine the acceptable heights for the manufacturing parts.</p>
+                <p>I first created a window function to be reused, and a subquery that had ROW_NUMBER (unique identifier within the window), and determined the average height and standard deviation for the height!</b></p>
+                <pre>SELECT
+		a.*,
+		avg_height + 3 * a.stddev_height/sqrt(5) AS ucl,
+		avg_height - 3 * a.stddev_height/sqrt(5) AS lcl
+	FROM(
+		SELECT
+			operator,
+			ROW_NUMBER() OVER w AS row_number,
+			height,
+			AVG(height) OVER w AS avg_height,
+			STDDEV(height) OVER w AS stddev_height
+		FROM public.manufacturing_parts
+
+		WINDOW w AS (
+			PARTITION BY operator
+			ORDER BY item_no
+			ROWS BETWEEN 4 PRECEDING AND CURRENT ROW)) AS a
+                </pre>
+                <h4>Calculating the Acceptable Range...</h4>
+                <p>Using statistical approach, I calculated the upper and lower control limit using these formulas below:</p>
+                <img src="images/stat.png" height="72" width="274"/>
+                <p>I then put the subquery I created into another query that calculated the UCL and LCL</p>
+                <pre>SELECT
+		a.*,
+		avg_height + 3 * a.stddev_height/sqrt(5) AS ucl,
+		avg_height - 3 * a.stddev_height/sqrt(5) AS lcl
+	FROM(
+		SELECT
+			operator,
+			ROW_NUMBER() OVER w AS row_number,
+			height,
+			AVG(height) OVER w AS avg_height,
+			STDDEV(height) OVER w AS stddev_height
+		FROM public.manufacturing_parts
+
+		WINDOW w AS (
+			PARTITION BY operator
+			ORDER BY item_no
+			ROWS BETWEEN 4 PRECEDING AND CURRENT ROW)) AS a
+                </pre>
+
+                <h4>Using Conditionals...</h4>
+                <p>I then used a CASE station to check if it is in that acceptable range and I created an alert. This is the overall query below:</p>
+                <pre>SELECT
+	b.*,
+	CASE
+		WHEN b.height NOT BETWEEN b.lcl AND b.ucl THEN TRUE
+		ELSE FALSE
+	END AS alert
+FROM
+	(SELECT
+		a.*,
+		avg_height + 3 * a.stddev_height/sqrt(5) AS ucl,
+		avg_height - 3 * a.stddev_height/sqrt(5) AS lcl
+	FROM(
+		SELECT
+			operator,
+			ROW_NUMBER() OVER w AS row_number,
+			height,
+			AVG(height) OVER w AS avg_height,
+			STDDEV(height) OVER w AS stddev_height
+		FROM public.manufacturing_parts
+
+		WINDOW w AS (
+			PARTITION BY operator
+			ORDER BY item_no
+			ROWS BETWEEN 4 PRECEDING AND CURRENT ROW)) AS a
+	WHERE a.row_number >= 5
+	) AS b;
+                </pre>
+                <p>I created an alert that will flag whether the height of the product is in the control limits for each operator. This will be useful in real world scenarios where there will be checks in SQL!</p>
+
+                <img src="images/alert.png" height="454" width="951"/></div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <section id="footer">
+        <div class="container">
+            <ul class="copyright">
+                <li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+            </ul>
+        </div>
+    </section>
+
+</div>
+
+<!-- Scripts -->
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/jquery.scrollex.min.js"></script>
+<script src="assets/js/jquery.scrolly.min.js"></script>
+<script src="assets/js/browser.min.js"></script>
+<script src="assets/js/breakpoints.min.js"></script>
+<script src="assets/js/util.js"></script>
+<script src="assets/js/main.js"></script>
+
+</body>
+</html>
